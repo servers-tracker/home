@@ -781,6 +781,7 @@ tbody tr:hover{
 
 <script>
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEgo-sYLiHKhWQlswaoM7HsMJ4zuc4KRZzoGfAAyewEmyEiX6OAozrsOiVEyueVdQaXSqqq5RCGUhy/pub?output=csv";
+const DEFAULT_LAUNCH_HOUR_UTC = 21;
 
 let currentFilter = "all";
 let currentSort = "newest";
@@ -893,8 +894,37 @@ function parseCSVRow(row){
     return cells;
 }
 
-function formatDate(dateValue){
+function getDateOnlyParts(dateValue){
+    let match = String(dateValue || "").trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!match) return null;
+
+    return {
+        year: Number(match[1]),
+        month: Number(match[2]),
+        day: Number(match[3])
+    };
+}
+
+function getLaunchDate(dateValue){
+    let parts = getDateOnlyParts(dateValue);
+    if(parts){
+        return new Date(Date.UTC(parts.year, parts.month - 1, parts.day, DEFAULT_LAUNCH_HOUR_UTC, 0, 0, 0));
+    }
+
     let parsed = new Date(dateValue);
+    if(Number.isNaN(parsed.getTime())){
+        return null;
+    }
+
+    return parsed;
+}
+
+function formatDate(dateValue){
+    let parts = getDateOnlyParts(dateValue);
+    let parsed = parts
+        ? new Date(Date.UTC(parts.year, parts.month - 1, parts.day, 12, 0, 0, 0))
+        : new Date(dateValue);
+
     if(Number.isNaN(parsed.getTime())){
         return dateValue || "-";
     }
@@ -902,7 +932,8 @@ function formatDate(dateValue){
     return parsed.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
-        day: "numeric"
+        day: "numeric",
+        timeZone: parts ? "UTC" : undefined
     });
 }
 
@@ -986,7 +1017,8 @@ apply();
 }
 
 function getDateTimestamp(dateValue, fallbackValue){
-    let timestamp = new Date(dateValue).getTime();
+    let parsed = getLaunchDate(dateValue);
+    let timestamp = parsed ? parsed.getTime() : NaN;
     return Number.isNaN(timestamp) ? fallbackValue : timestamp;
 }
 
@@ -1213,9 +1245,9 @@ requestAnimationFrame(function(){
 
 function calculateUptime(date){
 const now = new Date();
-const start = new Date(date);
+const start = getLaunchDate(date);
 
-if(Number.isNaN(start.getTime()) || now < start){
+if(!start || Number.isNaN(start.getTime()) || now < start){
     return "-";
 }
 
@@ -1297,12 +1329,12 @@ const now = new Date();
 let changed = false;
 
 document.querySelectorAll("#tableBody tr").forEach(function(row){
-    let date = new Date(row.dataset.date);
+    let date = getLaunchDate(row.dataset.date);
     let status = row.dataset.status;
     let uptime = row.querySelector(".uptime");
     let statusEl = row.querySelector(".status");
 
-    if(status === "upcoming" && now >= date){
+    if(date && status === "upcoming" && now >= date){
         row.dataset.status = "online";
         statusEl.className = "status online";
         statusEl.innerText = "Online";
