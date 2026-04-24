@@ -1,149 +1,283 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MMO Server Tracker</title>
 
 <style>
-body{margin:0;font-family:Segoe UI;background:#05080f;color:white}
-.container{padding:20px}
+body{
+    margin:0;
+    font-family:Trebuchet MS,Segoe UI,sans-serif;
+    color:#f4ead1;
+    background:
+        radial-gradient(circle at 18% 0%,rgba(210,120,38,0.18),transparent 30%),
+        radial-gradient(circle at 85% 14%,rgba(166,45,24,0.22),transparent 28%),
+        linear-gradient(180deg,#0a0607 0%,#14090b 50%,#080405 100%);
+    min-height:100vh;
+    position:relative;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+        linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px),
+        linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);
+    background-size:120px 120px;
+    mask-image:radial-gradient(circle at center,black 38%,transparent 92%);
+    opacity:.35;
+}
+
+.container{
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 20px 42px;
+}
+
 .header{
-    background:linear-gradient(90deg,#0b1220,#0a1f2a);
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:30px; /* 🔥 era prea mic */
+    position:relative;
+    overflow:hidden;
+    padding:28px 30px;
+    border-radius:20px;
+    margin-bottom:30px;
+    border:1px solid rgba(199,154,75,0.25);
+    background:
+        radial-gradient(circle at top right,rgba(224,186,110,0.12),transparent 28%),
+        linear-gradient(135deg,rgba(31,16,18,0.98),rgba(13,8,10,0.92));
+    box-shadow:
+        0 18px 50px rgba(0,0,0,0.42),
+        inset 0 1px 0 rgba(255,255,255,0.04);
 }
-.header h1{color:#00e0ff;margin:0}
-.disclaimer{font-size:13px;color:#aaa}
 
-.filter{margin-bottom:20px}
+.header::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    padding:1px;
+    background:linear-gradient(135deg,rgba(224,186,110,0.55),transparent 38%,transparent 65%,rgba(192,77,38,0.34));
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+            mask-composite:exclude;
+    pointer-events:none;
+}
 
-select{padding:8px;background:#0b1220;color:white;border:1px solid #1c2a44;border-radius:6px}
+.header h1{
+    margin:0 0 8px;
+    color:#f4d08b;
+    font-family:Palatino Linotype,Book Antiqua,Georgia,serif;
+    font-size:34px;
+    letter-spacing:.04em;
+    text-shadow:0 0 18px rgba(244,208,139,0.18);
+}
 
-table{width:100%;border-collapse:collapse;background:#0b1220;border-radius:12px;overflow:hidden}
-th{background:#0f1a2e;color:#00e0ff}
+.disclaimer{
+    font-size:13px;
+    color:#d0bea0;
+    max-width:760px;
+    line-height:1.6;
+}
+
+select{
+    padding:10px 14px;
+    background:rgba(13,8,10,0.92);
+    color:#f4ead1;
+    border:1px solid rgba(199,154,75,0.24);
+    border-radius:10px;
+    outline:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+select:focus{
+    border-color:rgba(224,186,110,0.5);
+    box-shadow:0 0 0 3px rgba(199,154,75,0.12);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:18px;
+    background:
+        linear-gradient(180deg,rgba(255,255,255,0.02),transparent 20%),
+        rgba(15,9,11,0.92);
+    border:1px solid rgba(199,154,75,0.18);
+    box-shadow:0 18px 45px rgba(0,0,0,0.28);
+}
+
+th{
+    background:linear-gradient(180deg,rgba(84,43,24,0.78),rgba(35,19,18,0.9));
+    color:#f1dca5;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+}
+
 td,th{
-    padding:12px;
-    border-bottom:1px solid #1c2a44;
+    padding:14px 16px;
+    text-align:left;
+    border-bottom:1px solid rgba(199,154,75,0.1);
 }
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #1c2a44;
-}
-.status{padding:4px 10px;border-radius:6px;font-weight:bold;display: inline-block;
-}
-.online{background:#0f5132;color:#00ffae}
-.upcoming{background:#664d03;color:#ffd700}
-.closed{background:#842029;color:#ff6b6b}
 
-a{color:#00e0ff}
+tbody tr{
+    transition:background .22s ease,transform .22s ease;
+}
 
-/* 🔥 FIX SPACING FILTER BAR */
+tbody tr:hover{
+    background:rgba(255,255,255,0.03);
+}
+
+.status{
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:700;
+    display:inline-block;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    font-size:12px;
+    border:1px solid transparent;
+}
+
+.online{
+    background:rgba(37,97,74,0.34);
+    color:#bff7df;
+    border-color:rgba(97,214,168,0.26);
+    box-shadow:0 0 18px rgba(65,180,126,0.12);
+}
+
+.upcoming{
+    background:rgba(133,90,17,0.34);
+    color:#ffe29f;
+    border-color:rgba(224,186,110,0.28);
+    box-shadow:0 0 18px rgba(224,186,110,0.12);
+}
+
+.closed{
+    background:rgba(115,31,24,0.34);
+    color:#ffbeb2;
+    border-color:rgba(202,94,71,0.26);
+    box-shadow:0 0 18px rgba(202,94,71,0.1);
+}
+
+a{color:#f1dca5}
+
 .filter-bar{
     display:flex;
     align-items:center;
     flex-wrap:wrap;
     gap:12px;
-    margin-top:15px;      /* spațiu față de header */
-    margin-bottom:25px;   /* spațiu față de tabel */
+    margin-top:18px;
+    margin-bottom:24px;
+    padding:18px 20px;
+    border-radius:16px;
+    border:1px solid rgba(199,154,75,0.15);
+    background:rgba(15,9,11,0.72);
+    box-shadow:0 10px 28px rgba(0,0,0,0.2);
 }
 
-/* 🔥 SPAȚIU între label + select */
 .filter-bar label{
-    margin-right:4px;
+    color:#cfbc98;
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
 }
 
-/* 🔥 BUTON ADD */
 .add-btn{
-    margin-left:8px; /* mic spațiu după Sort */
-    padding:6px 12px;
-    background:#00e0ff;
-    color:#000;
-    border-radius:6px;
-    font-weight:600;
+    margin-left:8px;
+    padding:10px 16px;
+    color:#1d0d07;
+    border-radius:999px;
+    font-weight:700;
     text-decoration:none;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 10px 26px rgba(201,136,58,0.24);
 }
 
 .add-btn:hover{
-    background:#00bcd4;
+    background:linear-gradient(135deg,#f5d58d,#d69443 70%,#9d622a 100%);
 }
 
-/* 🔥 BUTTON STYLE (Visit / Join) */
 .btn-link{
     display:inline-block;
-    padding:6px 14px;
-    background:#00e0ff;
-    color:#000;
-    border-radius:6px;
-    font-weight:600;
+    padding:8px 15px;
+    color:#1d0d07;
+    border-radius:999px;
+    font-weight:700;
     text-decoration:none;
-    transition:0.2s;
+    transition:.2s;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 10px 24px rgba(201,136,58,0.2);
 }
 
 .tcl-box{
-    margin-top:40px;
-    padding:30px 20px; /* 🔥 egal sus/jos */
-    border-radius:12px;
-    background:linear-gradient(135deg,#0a1f2a,#081520);
-    border:1px solid #1c2a44;
-
-    display:flex;              /* 🔥 centrare reală */
+    margin-top:38px;
+    padding:34px 24px;
+    border-radius:20px;
+    border:1px solid rgba(199,154,75,0.18);
+    background:
+        radial-gradient(circle at top right,rgba(224,186,110,0.1),transparent 30%),
+        linear-gradient(135deg,rgba(25,14,15,0.96),rgba(13,8,10,0.94));
+    display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     text-align:center;
+    box-shadow:0 18px 45px rgba(0,0,0,0.28);
 }
 
 .tcl-title{
-    font-size:20px;
-    color:#00e0ff;
+    font-size:24px;
+    color:#f4d08b;
     margin-bottom:10px;
-    margin-top:0; /* 🔥 elimină spațiu extra sus */
+    margin-top:0;
+    font-family:Palatino Linotype,Book Antiqua,Georgia,serif;
+    letter-spacing:.03em;
 }
 
 .tcl-desc{
     font-size:14px;
-    color:#ccc;
-    margin-bottom:20px; /* 🔥 echilibru cu buton */
-    line-height:1.4;
+    color:#ccb998;
+    margin-bottom:22px;
+    line-height:1.7;
+    max-width:620px;
 }
 
 .tcl-btn{
     display:inline-block;
-    padding:10px 20px;
-    background:#00e0ff;
-    color:#000000; /* 🔥 negru REAL */
-    border-radius:8px;
-    font-weight:700; /* 🔥 mai strong */
+    padding:11px 22px;
+    color:#1d0d07;
+    border-radius:999px;
+    font-weight:700;
     text-decoration:none;
-    transition:0.2s;
-    box-shadow:0 0 12px rgba(0,224,255,0.25);
-}
-
-.tcl-btn:hover{
-    background:#00bcd4;
+    transition:.2s;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 12px 28px rgba(201,136,58,0.26);
 }
 
 .add-btn,
 .btn-link,
 .tcl-btn{
-    transition: all 0.25s ease;
-    position: relative;
-    overflow: hidden;
+    transition:all .25s ease;
+    position:relative;
+    overflow:hidden;
 }
 
 .add-btn:hover,
 .btn-link:hover,
 .tcl-btn:hover{
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 18px rgba(0,224,255,0.35);
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 14px 30px rgba(201,136,58,0.32);
 }
 
 .add-btn:active,
 .btn-link:active,
 .tcl-btn:active{
-    transform: scale(0.95);
+    transform:scale(.97);
 }
 
 .add-btn::before,
@@ -155,13 +289,8 @@ a{color:#00e0ff}
     left:-100%;
     width:100%;
     height:100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255,255,255,0.4),
-        transparent
-    );
-    transition: 0.5s;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.32),transparent);
+    transition:.55s;
 }
 
 .add-btn:hover::before,
@@ -170,41 +299,32 @@ a{color:#00e0ff}
     left:100%;
 }
 
-.btn-link:hover{
-    background: linear-gradient(135deg, #00e0ff, #00bcd4);
-}
-
-.filter-bar{
-    display:flex;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:12px;
-    margin-top:15px;
-    margin-bottom:25px;
-}
-
-/* 🔥 împinge textul în dreapta */
 .submit-box-inline{
     margin-left:auto;
     font-size:12px;
-    color:#888;
-    background:rgba(10,31,42,0.6);
-    border:1px solid #1c2a44;
-    padding:6px 10px;
-    border-radius:8px;
+    color:#d1bf9f;
+    background:rgba(33,17,15,0.76);
+    border:1px solid rgba(199,154,75,0.2);
+    padding:8px 12px;
+    border-radius:10px;
     white-space:nowrap;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .submit-box-inline:hover{
-    color:#00e0ff;
-    border-color:#00e0ff;
+    color:#f4d08b;
+    border-color:rgba(224,186,110,0.42);
 }
 
 @media(max-width:700px){
+    .container{padding:18px 14px 30px}
+    .header{padding:24px 20px}
+    .header h1{font-size:28px}
     .submit-box-inline{
         width:100%;
         margin-left:0;
         text-align:center;
+        white-space:normal;
     }
 }
 </style>
@@ -215,7 +335,7 @@ a{color:#00e0ff}
 <div class="container">
 
 <div class="header">
-<h1>🌐 Servers Tracker</h1>
+<h1>Servers Tracker</h1>
 <div class="disclaimer">This is an independent fan-made listing website. Not affiliated with any game publisher or official service.</div>
 </div>
 
@@ -231,18 +351,16 @@ a{color:#00e0ff}
 
 <label>Sort:</label>
 <select onchange="sortServers(this.value)">
-<option value="newest">Newest → Oldest</option>
-<option value="oldest">Oldest → Newest</option>
+<option value="newest">Newest to Oldest</option>
+<option value="oldest">Oldest to Newest</option>
 </select>
 
 <a class="add-btn" href="https://tally.so/r/5Blzpb" target="_blank">
 + Add Server
 </a>
 
-<!-- 🔥 MUTAT AICI -->
 <div class="submit-box-inline">
-⚠️ Please submit your server in advance 
-— listing may take time so submit early!
+Please submit your server in advance. Listing may take time, so submit early.
 </div>
 
 </div>
@@ -331,13 +449,13 @@ a{color:#00e0ff}
 </table>
 
 <div class="tcl-box">
-    <div class="tcl-title">🎮 The Cursed Land</div>
-    
+    <div class="tcl-title">The Cursed Land</div>
+
     <div class="tcl-desc">
         Looking for a modern MMORPG experience?<br>
-        Cross-platform gameplay on PC & Mobile, active events and evolving world.
+        Cross-platform gameplay on PC and Mobile, active events and an evolving world.
     </div>
-    
+
     <a class="tcl-btn" href="https://www.thecursedland.com/" target="_blank">
         Play Now
     </a>
@@ -371,14 +489,14 @@ rows.forEach(r=>t.appendChild(r));
 
 apply();
 updateUptime();
-setInterval(updateUptime, 1000); // update la fiecare secundă
+setInterval(updateUptime, 1000);
+
 function calculateUptime(startDate){
     const now = new Date();
     const start = new Date(startDate);
 
     let diffSeconds = Math.floor((now - start) / 1000);
 
-    // 🔥 SAME DAY = HUMAN STYLE
     if (diffSeconds < 86400) {
         return "just a few hours";
     }
