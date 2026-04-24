@@ -395,6 +395,11 @@ tbody tr:hover{
     transition:all .22s ease;
 }
 
+.page-btn.nav-btn{
+    min-width:auto;
+    padding:0 14px;
+}
+
 .page-btn:hover{
     transform:translateY(-2px);
     background:rgba(109,54,33,0.92);
@@ -996,11 +1001,37 @@ if(totalPages <= 1){
 }
 
 let html = "";
-for(let i = 1; i <= totalPages; i++){
-    html += '<button class="page-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+
+html += paginationButton(1, "1", currentPage === 1);
+
+if(currentPage > 1){
+    html += paginationButton(currentPage - 1, "Previous", false, true);
+}
+
+if(currentPage > 1 && currentPage < totalPages){
+    html += paginationButton(currentPage, String(currentPage), true);
+}
+
+if(currentPage < totalPages){
+    if(currentPage + 1 < totalPages){
+        html += paginationButton(currentPage + 1, "Next", false, true);
+        html += paginationButton(totalPages, "Last", false, true);
+    } else {
+        html += paginationButton(totalPages, "Last", false, true);
+    }
+} else if(totalPages > 1){
+    html += paginationButton(totalPages, "Last", true, true);
 }
 
 pagination.innerHTML = html;
+}
+
+function paginationButton(page, label, isActive, isNav){
+let classes = "page-btn";
+if(isActive) classes += " active";
+if(isNav) classes += " nav-btn";
+
+return '<button class="' + classes + '" onclick="goToPage(' + page + ')">' + label + '</button>';
 }
 
 function goToPage(page){
