@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MMO Server Tracker</title>
+
+<style>
+body{margin:0;font-family:Segoe UI;background:#05080f;color:white}
+.container{padding:20px}
+.header{
+    background:linear-gradient(90deg,#0b1220,#0a1f2a);
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:30px; /* 🔥 era prea mic */
+}
+.header h1{color:#00e0ff;margin:0}
+.disclaimer{font-size:13px;color:#aaa}
+
+.filter{margin-bottom:20px}
+
+select{padding:8px;background:#0b1220;color:white;border:1px solid #1c2a44;border-radius:6px}
+
+table{width:100%;border-collapse:collapse;background:#0b1220;border-radius:12px;overflow:hidden}
+th{background:#0f1a2e;color:#00e0ff}
+td,th{
+    padding:12px;
+    border-bottom:1px solid #1c2a44;
+}
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #1c2a44;
+}
+.status{padding:4px 10px;border-radius:6px;font-weight:bold;display: inline-block;
+}
+.online{background:#0f5132;color:#00ffae}
+.upcoming{background:#664d03;color:#ffd700}
+.closed{background:#842029;color:#ff6b6b}
+
+a{color:#00e0ff}
+
+/* 🔥 FIX SPACING FILTER BAR */
+.filter-bar{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:15px;      /* spațiu față de header */
+    margin-bottom:25px;   /* spațiu față de tabel */
+}
+
+/* 🔥 SPAȚIU între label + select */
+.filter-bar label{
+    margin-right:4px;
+}
+
+/* 🔥 BUTON ADD */
+.add-btn{
+    margin-left:8px; /* mic spațiu după Sort */
+    padding:6px 12px;
+    background:#00e0ff;
+    color:#000;
+    border-radius:6px;
+    font-weight:600;
+    text-decoration:none;
+}
+
+.add-btn:hover{
+    background:#00bcd4;
+}
+
+/* 🔥 BUTTON STYLE (Visit / Join) */
+.btn-link{
+    display:inline-block;
+    padding:6px 14px;
+    background:#00e0ff;
+    color:#000;
+    border-radius:6px;
+    font-weight:600;
+    text-decoration:none;
+    transition:0.2s;
+}
+
+.tcl-box{
+    margin-top:40px;
+    padding:30px 20px; /* 🔥 egal sus/jos */
+    border-radius:12px;
+    background:linear-gradient(135deg,#0a1f2a,#081520);
+    border:1px solid #1c2a44;
+
+    display:flex;              /* 🔥 centrare reală */
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.tcl-title{
+    font-size:20px;
+    color:#00e0ff;
+    margin-bottom:10px;
+    margin-top:0; /* 🔥 elimină spațiu extra sus */
+}
+
+.tcl-desc{
+    font-size:14px;
+    color:#ccc;
+    margin-bottom:20px; /* 🔥 echilibru cu buton */
+    line-height:1.4;
+}
+
+.tcl-btn{
+    display:inline-block;
+    padding:10px 20px;
+    background:#00e0ff;
+    color:#000000; /* 🔥 negru REAL */
+    border-radius:8px;
+    font-weight:700; /* 🔥 mai strong */
+    text-decoration:none;
+    transition:0.2s;
+    box-shadow:0 0 12px rgba(0,224,255,0.25);
+}
+
+.tcl-btn:hover{
+    background:#00bcd4;
+}
+
+.add-btn,
+.btn-link,
+.tcl-btn{
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.add-btn:hover,
+.btn-link:hover,
+.tcl-btn:hover{
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 18px rgba(0,224,255,0.35);
+}
+
+.add-btn:active,
+.btn-link:active,
+.tcl-btn:active{
+    transform: scale(0.95);
+}
+
+.add-btn::before,
+.btn-link::before,
+.tcl-btn::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.4),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.add-btn:hover::before,
+.btn-link:hover::before,
+.tcl-btn:hover::before{
+    left:100%;
+}
+
+.btn-link:hover{
+    background: linear-gradient(135deg, #00e0ff, #00bcd4);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>🌐 Servers Tracker</h1>
+<div class="disclaimer">This is an independent fan-made listing website. Not affiliated with any game publisher or official service.</div>
+</div>
+
+<div class="filter-bar">
+
+<label>Status:</label>
+<select onchange="filterServers(this.value)">
+<option value="all">All</option>
+<option value="online">Online</option>
+<option value="upcoming">Upcoming</option>
+<option value="closed">Closed</option>
+</select>
+
+<label>Sort:</label>
+<select onchange="sortServers(this.value)">
+<option value="newest">Newest → Oldest</option>
+<option value="oldest">Oldest → Newest</option>
+</select>
+
+<!-- 🔥 FIX: EXACT DUPĂ SORT -->
+<a class="add-btn" href="https://YOUR-FORM-LINK-HERE" target="_blank">
++ Add Server
+</a>
+
+</div>
+
+<table id="table">
+<thead>
+<tr>
+<th>Server</th>
+<th>Owner</th>
+<th>Launch</th>
+<th>Uptime</th>
+<th>Status</th>
+<th>Website</th>
+<th>Discord</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr data-status="upcoming" data-date="2026-04-30">
+<td>Server 1</td>
+<td>AdminX</td>
+<td>April 30, 2026</td>
+<td class="uptime"></td>
+<td><span class="status upcoming">Upcoming</span></td>
+<td>
+    <a class="btn-link" href="https://server1.com" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discord.gg/server1.com" target="_blank">Join</a>
+</td>
+</tr>
+<tr data-status="online" data-date="2026-04-08">
+<td>Server 0</td>
+<td>Admin</td>
+<td>April 8, 2026</td>
+<td class="uptime"></td>
+<td><span class="status online">Online</span></td>
+<td>
+    <a class="btn-link" href="https://server0.com" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discord.gg/server0" target="_blank">Join</a>
+</td>
+</tr>
+<tr data-status="closed" data-date="2026-04-14">
+<td>Server 2</td>
+<td>AdminuX</td>
+<td>April 14, 2026</td>
+<td class="uptime"></td>
+<td><span class="status closed">Closed</span></td>
+<td>
+    <a class="btn-link" href="https://server2.com" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discord.gg/server2" target="_blank">Join</a>
+</td>
+</tr>
+<tr data-status="online" data-date="2026-04-13">
+<td>Server 4</td>
+<td>Mix</td>
+<td>April 13, 2026</td>
+<td class="uptime"></td>
+<td><span class="status online">Online</span></td>
+<td>
+    <a class="btn-link" href="https://server4.com" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discor.gg//server4" target="_blank">Join</a>
+</td>
+</tr>
+<tr data-status="online" data-date="2026-04-24">
+<td>Server 5</td>
+<td>Onix</td>
+<td>April 24, 2026</td>
+<td class="uptime"></td>
+<td><span class="status online">Online</span></td>
+<td>
+    <a class="btn-link" href="https://server5.com" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discord.gg/server5" target="_blank">Join</a>
+</td>
+</tr>
+</tbody>
+</table>
+
+<div class="tcl-box">
+    <div class="tcl-title">🎮 The Cursed Land</div>
+    
+    <div class="tcl-desc">
+        Looking for a modern MMORPG experience?<br>
+        Cross-platform gameplay on PC & Mobile, active events and evolving world.
+    </div>
+    
+    <a class="tcl-btn" href="https://www.thecursedland.com/" target="_blank">
+        Play Now
+    </a>
+</div>
+
+<script>
+let currentFilter="all";
+let currentSort="newest";
+
+function filterServers(s){currentFilter=s;apply();}
+function sortServers(s){currentSort=s;apply();}
+
+function apply(){
+let t=document.querySelector("#table tbody");
+let rows=[...t.querySelectorAll("tr")];
+
+rows.forEach(r=>{
+r.style.display=(currentFilter==="all"||r.dataset.status===currentFilter)?"":"none";
+});
+
+let order={upcoming:1,online:2,closed:3};
+
+rows.sort((a,b)=>{
+let sa=order[a.dataset.status], sb=order[b.dataset.status];
+if(sa!==sb)return sa-sb;
+return currentSort==="newest"?new Date(b.dataset.date)-new Date(a.dataset.date):new Date(a.dataset.date)-new Date(b.dataset.date);
+});
+
+rows.forEach(r=>t.appendChild(r));
+}
+
+apply();
+updateUptime();
+setInterval(updateUptime, 1000); // update la fiecare secundă
+function calculateUptime(startDate){
+    const now = new Date();
+    const start = new Date(startDate);
+
+    let diffSeconds = Math.floor((now - start) / 1000);
+
+    // 🔥 SAME DAY = HUMAN STYLE
+    if (diffSeconds < 86400) {
+        return "just a few hours";
+    }
+
+    let diffDays = Math.floor(diffSeconds / 86400);
+
+    if (diffDays === 1) return "1 day";
+    if (diffDays < 7) return diffDays + " days";
+
+    let weeks = Math.floor(diffDays / 7);
+    if (weeks === 1) return "1 week";
+    if (weeks < 4) return weeks + " weeks";
+
+    let months = Math.floor(diffDays / 30);
+    if (months === 1) return "1 month";
+    if (months < 12) return months + " months";
+
+    let years = Math.floor(diffDays / 365);
+    return years === 1 ? "1 year" : years + " years";
+}
+
+function updateUptime(){
+    document.querySelectorAll("#table tbody tr").forEach(row=>{
+        const date = row.dataset.date;
+        const status = row.dataset.status;
+
+        const uptimeCell = row.querySelector(".uptime");
+
+        if(status === "online"){
+            uptimeCell.innerText = calculateUptime(date);
+        } else {
+            uptimeCell.innerText = "-";
+        }
+    });
+}
+</script>
+
+</body>
+</html>
