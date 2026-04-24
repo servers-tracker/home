@@ -813,6 +813,7 @@ fetch(CSV_URL)
         let serverKey = normalizeServerKey(name);
 
         if(!serverKey) return;
+        if(isBlockedServerName(name)) return;
         if(seenServers.has(serverKey)) return;
 
         seenServers.add(serverKey);
@@ -850,6 +851,14 @@ function normalizeServerKey(value){
         .trim()
         .replace(/\s+/g, " ")
         .toLowerCase();
+}
+
+function isBlockedServerName(value){
+    let compact = String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "");
+
+    return compact === "test" || compact === "testserver" || compact === "server";
 }
 
 function parseCSVRow(row){
