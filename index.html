@@ -858,7 +858,7 @@ function isBlockedServerName(value){
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "");
 
-    return compact === "test" || compact === "testserver" || compact === "server";
+    return /^(test(?:server)?|server)\d*$/.test(compact);
 }
 
 function parseCSVRow(row){
