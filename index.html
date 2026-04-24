@@ -976,6 +976,11 @@ shouldJumpToSearchResult = true;
 apply();
 }
 
+function getDateTimestamp(dateValue, fallbackValue){
+    let timestamp = new Date(dateValue).getTime();
+    return Number.isNaN(timestamp) ? fallbackValue : timestamp;
+}
+
 function apply(){
 let tableBody = document.getElementById("tableBody");
 let rows = Array.from(tableBody.querySelectorAll("tr"));
@@ -984,14 +989,28 @@ let order = { upcoming: 1, online: 2, closed: 3 };
 rows.sort(function(a,b){
     let statusA = order[a.dataset.status] || 99;
     let statusB = order[b.dataset.status] || 99;
+    let dateA;
+    let dateB;
 
     if(statusA !== statusB){
         return statusA - statusB;
     }
 
-    return currentSort === "newest"
-        ? new Date(b.dataset.date) - new Date(a.dataset.date)
-        : new Date(a.dataset.date) - new Date(b.dataset.date);
+    if(a.dataset.status === "upcoming"){
+        dateA = getDateTimestamp(a.dataset.date, Number.MAX_SAFE_INTEGER);
+        dateB = getDateTimestamp(b.dataset.date, Number.MAX_SAFE_INTEGER);
+        return dateA - dateB;
+    }
+
+    if(currentSort === "newest"){
+        dateA = getDateTimestamp(a.dataset.date, Number.NEGATIVE_INFINITY);
+        dateB = getDateTimestamp(b.dataset.date, Number.NEGATIVE_INFINITY);
+        return dateB - dateA;
+    }
+
+    dateA = getDateTimestamp(a.dataset.date, Number.MAX_SAFE_INTEGER);
+    dateB = getDateTimestamp(b.dataset.date, Number.MAX_SAFE_INTEGER);
+    return dateA - dateB;
 });
 
 rows.forEach(function(row){
