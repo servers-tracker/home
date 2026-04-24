@@ -1137,19 +1137,82 @@ requestAnimationFrame(function(){
 function calculateUptime(date){
 const now = new Date();
 const start = new Date(date);
-let diff = Math.floor((now - start) / 86400000);
 
-if(diff < 1) return "few hours";
-if(diff === 1) return "1 day";
-if(diff < 7) return diff + " days";
+if(Number.isNaN(start.getTime()) || now < start){
+    return "-";
+}
 
-let weeks = Math.floor(diff / 7);
-if(weeks < 4) return weeks + " weeks";
+let diffMs = now - start;
+let diffHours = Math.floor(diffMs / 3600000);
+let diffDays = Math.floor(diffMs / 86400000);
 
-let months = Math.floor(diff / 30);
-if(months < 12) return months + " months";
+if(diffHours < 1) return "less than 1 hour";
+if(diffHours < 24) return pluralize(diffHours, "hour");
+if(diffDays < 7) return pluralize(diffDays, "day");
 
-return Math.floor(diff / 365) + " years";
+if(diffDays < 30){
+    let weeks = Math.floor(diffDays / 7);
+    let remainingDays = diffDays % 7;
+
+    return joinDurationParts([
+        pluralize(weeks, "week"),
+        remainingDays ? pluralize(remainingDays, "day") : ""
+    ]);
+}
+
+let years = now.getFullYear() - start.getFullYear();
+let yearMarker = addMonths(start, years * 12);
+
+if(yearMarker > now){
+    years--;
+    yearMarker = addMonths(start, years * 12);
+}
+
+let months = (now.getFullYear() - yearMarker.getFullYear()) * 12 + (now.getMonth() - yearMarker.getMonth());
+let monthMarker = addMonths(yearMarker, months);
+
+if(monthMarker > now){
+    months--;
+    monthMarker = addMonths(yearMarker, months);
+}
+
+let remainingDays = Math.floor((now - monthMarker) / 86400000);
+
+return joinDurationParts([
+    years ? pluralize(years, "year") : "",
+    months ? pluralize(months, "month") : "",
+    remainingDays ? pluralize(remainingDays, "day") : ""
+]);
+}
+
+function pluralize(value, unit){
+if(value === 1) return value + " " + unit;
+return value + " " + unit + "s";
+}
+
+function joinDurationParts(parts){
+let filled = parts.filter(function(part){
+    return !!part;
+});
+
+if(!filled.length) return "less than 1 hour";
+if(filled.length === 1) return filled[0];
+if(filled.length === 2) return filled[0] + " and " + filled[1];
+
+return filled.slice(0, -1).join(", ") + " and " + filled[filled.length - 1];
+}
+
+function addMonths(date, amount){
+let next = new Date(date);
+let day = next.getDate();
+
+next.setDate(1);
+next.setMonth(next.getMonth() + amount);
+
+let daysInTargetMonth = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+next.setDate(Math.min(day, daysInTargetMonth));
+
+return next;
 }
 
 function updateUptime(){
