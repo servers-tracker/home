@@ -173,6 +173,40 @@ a{color:#00e0ff}
 .btn-link:hover{
     background: linear-gradient(135deg, #00e0ff, #00bcd4);
 }
+
+.filter-bar{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:15px;
+    margin-bottom:25px;
+}
+
+/* 🔥 împinge textul în dreapta */
+.submit-box-inline{
+    margin-left:auto;
+    font-size:12px;
+    color:#888;
+    background:rgba(10,31,42,0.6);
+    border:1px solid #1c2a44;
+    padding:6px 10px;
+    border-radius:8px;
+    white-space:nowrap;
+}
+
+.submit-box-inline:hover{
+    color:#00e0ff;
+    border-color:#00e0ff;
+}
+
+@media(max-width:700px){
+    .submit-box-inline{
+        width:100%;
+        margin-left:0;
+        text-align:center;
+    }
+}
 </style>
 </head>
 
@@ -201,10 +235,15 @@ a{color:#00e0ff}
 <option value="oldest">Oldest → Newest</option>
 </select>
 
-<!-- 🔥 FIX: EXACT DUPĂ SORT -->
-<a class="add-btn" href="https://YOUR-FORM-LINK-HERE" target="_blank">
+<a class="add-btn" href="https://tally.so/r/5Blzpb" target="_blank">
 + Add Server
 </a>
+
+<!-- 🔥 MUTAT AICI -->
+<div class="submit-box-inline">
+⚠️ Please submit your server in advance 
+— listing may take time so submit early!
+</div>
 
 </div>
 
@@ -212,7 +251,7 @@ a{color:#00e0ff}
 <thead>
 <tr>
 <th>Server</th>
-<th>Owner</th>
+<th>Owner Discord</th>
 <th>Launch</th>
 <th>Uptime</th>
 <th>Status</th>
@@ -223,69 +262,69 @@ a{color:#00e0ff}
 
 <tbody>
 
-<tr data-status="upcoming" data-date="2026-04-30">
-<td>Server 1</td>
-<td>AdminX</td>
-<td>April 30, 2026</td>
-<td class="uptime"></td>
-<td><span class="status upcoming">Upcoming</span></td>
-<td>
-    <a class="btn-link" href="https://server1.com" target="_blank">Visit</a>
-</td>
-<td>
-    <a class="btn-link" href="https://discord.gg/server1.com" target="_blank">Join</a>
-</td>
-</tr>
-<tr data-status="online" data-date="2026-04-08">
-<td>Server 0</td>
-<td>Admin</td>
-<td>April 8, 2026</td>
+<tr data-status="online" data-date="2026-02-20">
+<td>Projekt Hard</td>
+<td> Slash - sayosgakki</td>
+<td>February 20, 2026</td>
 <td class="uptime"></td>
 <td><span class="status online">Online</span></td>
 <td>
-    <a class="btn-link" href="https://server0.com" target="_blank">Visit</a>
+    <a class="btn-link" href="https://projekt-hard.eu/" target="_blank">Visit</a>
 </td>
 <td>
-    <a class="btn-link" href="https://discord.gg/server0" target="_blank">Join</a>
+    <a class="btn-link" href="https://discord.gg/vwpqnJRbQx" target="_blank">Join</a>
 </td>
 </tr>
-<tr data-status="closed" data-date="2026-04-14">
-<td>Server 2</td>
-<td>AdminuX</td>
-<td>April 14, 2026</td>
-<td class="uptime"></td>
-<td><span class="status closed">Closed</span></td>
-<td>
-    <a class="btn-link" href="https://server2.com" target="_blank">Visit</a>
-</td>
-<td>
-    <a class="btn-link" href="https://discord.gg/server2" target="_blank">Join</a>
-</td>
-</tr>
-<tr data-status="online" data-date="2026-04-13">
-<td>Server 4</td>
-<td>Mix</td>
-<td>April 13, 2026</td>
+<tr data-status="online" data-date="2026-04-17">
+<td>Kumi2</td>
+<td>takumi - takumi1.</td>
+<td>April 17, 2026</td>
 <td class="uptime"></td>
 <td><span class="status online">Online</span></td>
 <td>
-    <a class="btn-link" href="https://server4.com" target="_blank">Visit</a>
+    <a class="btn-link" href="https://kumi2.ro/" target="_blank">Visit</a>
 </td>
 <td>
-    <a class="btn-link" href="https://discor.gg//server4" target="_blank">Join</a>
+    <a class="btn-link" href="https://discord.gg/kumi2" target="_blank">Join</a>
 </td>
 </tr>
-<tr data-status="online" data-date="2026-04-24">
-<td>Server 5</td>
-<td>Onix</td>
-<td>April 24, 2026</td>
+<tr data-status="online" data-date="2026-04-03">
+<td>Lirin</td>
+<td>zwabberr - zwabberr</td>
+<td>April 3, 2026</td>
 <td class="uptime"></td>
 <td><span class="status online">Online</span></td>
 <td>
-    <a class="btn-link" href="https://server5.com" target="_blank">Visit</a>
+    <a class="btn-link" href="https://lirin.to/" target="_blank">Visit</a>
 </td>
 <td>
-    <a class="btn-link" href="https://discord.gg/server5" target="_blank">Join</a>
+    <a class="btn-link" href="http://discord.gg/lirin" target="_blank">Join</a>
+</td>
+</tr>
+<tr data-status="online" data-date="2022-09-16">
+<td>Shiva</td>
+<td>Sotrax - .sotrax</td>
+<td>September 16, 2022</td>
+<td class="uptime"></td>
+<td><span class="status online">Online</span></td>
+<td>
+    <a class="btn-link" href="https://shiva.international/en" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discord.gg/VKRUmEJDpb" target="_blank">Join</a>
+</td>
+</tr>
+<tr data-status="online" data-date="2025-08-22">
+<td>ORIGINS2</td>
+<td>[SA]VyP3r - vyp3r</td>
+<td>August 22, 2025</td>
+<td class="uptime"></td>
+<td><span class="status online">Online</span></td>
+<td>
+    <a class="btn-link" href="https://origins2.global/" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discord.com/invite/YzZtvB9Zr7" target="_blank">Join</a>
 </td>
 </tr>
 </tbody>
