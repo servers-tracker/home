@@ -6,81 +6,406 @@
 <title>Servers Tracker</title>
 
 <style>
+html{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
 body{
     margin:0;
-    font-family:Segoe UI;
-    background:#05080f;
-    color:white;
+    font-family:Trebuchet MS,Segoe UI,sans-serif;
+    color:#f4ead1;
+    background:
+        radial-gradient(circle at 18% 0%,rgba(210,120,38,0.18),transparent 30%),
+        radial-gradient(circle at 85% 14%,rgba(166,45,24,0.22),transparent 28%),
+        linear-gradient(180deg,#0a0607 0%,#14090b 50%,#080405 100%);
+    width:100%;
+    height:100%;
+    min-height:100vh;
+    overflow:hidden;
+    position:relative;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+        linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px),
+        linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px);
+    background-size:120px 120px;
+    mask-image:radial-gradient(circle at center,black 38%,transparent 92%);
+    opacity:.35;
+}
+
+.viewport-fit{
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:6px 0;
+}
+
+.scale-frame{
+    transform-origin:top center;
+    will-change:transform;
 }
 
 .container{
-    max-width:1100px;
-    margin:auto;
-    padding:20px;
+    max-width:1180px;
+    margin:0 auto;
+    padding:20px 18px 24px;
 }
 
 .header{
-    background:#0b1220;
-    padding:20px;
-    border-radius:10px;
-    margin-bottom:20px;
+    position:relative;
+    overflow:hidden;
+    padding:22px 24px;
+    border-radius:20px;
+    margin-bottom:18px;
+    border:1px solid rgba(199,154,75,0.25);
+    background:
+        radial-gradient(circle at top right,rgba(224,186,110,0.12),transparent 28%),
+        linear-gradient(135deg,rgba(31,16,18,0.98),rgba(13,8,10,0.92));
+    box-shadow:
+        0 18px 50px rgba(0,0,0,0.42),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.header::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    padding:1px;
+    background:linear-gradient(135deg,rgba(224,186,110,0.55),transparent 38%,transparent 65%,rgba(192,77,38,0.34));
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+            mask-composite:exclude;
+    pointer-events:none;
+}
+
+.header h1{
+    margin:0 0 8px;
+    color:#f4d08b;
+    font-family:Palatino Linotype,Book Antiqua,Georgia,serif;
+    font-size:clamp(28px,2vw,34px);
+    letter-spacing:.04em;
+    text-shadow:0 0 18px rgba(244,208,139,0.18);
+}
+
+.disclaimer{
+    font-size:12px;
+    color:#d0bea0;
+    max-width:760px;
+    line-height:1.6;
 }
 
 .filter-bar{
     display:flex;
-    gap:10px;
+    align-items:center;
     flex-wrap:wrap;
-    margin-bottom:15px;
+    gap:12px;
+    margin-top:12px;
+    margin-bottom:18px;
+    padding:14px 16px;
+    border-radius:16px;
+    border:1px solid rgba(199,154,75,0.15);
+    background:rgba(15,9,11,0.72);
+    box-shadow:0 10px 28px rgba(0,0,0,0.2);
+}
+
+.filter-bar label{
+    color:#cfbc98;
+    font-size:13px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
 }
 
 select{
-    padding:8px;
-    background:#0b1220;
-    color:white;
-    border:1px solid #1c2a44;
+    padding:8px 12px;
+    background:rgba(13,8,10,0.92);
+    color:#f4ead1;
+    border:1px solid rgba(199,154,75,0.24);
+    border-radius:10px;
+    outline:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+select:focus{
+    border-color:rgba(224,186,110,0.5);
+    box-shadow:0 0 0 3px rgba(199,154,75,0.12);
+}
+
+.add-btn{
+    margin-left:8px;
+    padding:8px 14px;
+    color:#1d0d07;
+    border-radius:999px;
+    font-weight:700;
+    text-decoration:none;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 10px 26px rgba(201,136,58,0.24);
+}
+
+.submit-box-inline{
+    margin-left:auto;
+    font-size:12px;
+    color:#d1bf9f;
+    background:rgba(33,17,15,0.76);
+    border:1px solid rgba(199,154,75,0.2);
+    padding:7px 10px;
+    border-radius:10px;
+    white-space:nowrap;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 table{
     width:100%;
     border-collapse:collapse;
-    background:#0b1220;
+    overflow:hidden;
+    border-radius:18px;
+    background:
+        linear-gradient(180deg,rgba(255,255,255,0.02),transparent 20%),
+        rgba(15,9,11,0.92);
+    border:1px solid rgba(199,154,75,0.18);
+    box-shadow:0 18px 45px rgba(0,0,0,0.28);
 }
 
-th, td{
-    padding:10px;
-    border-bottom:1px solid #1c2a44;
+th{
+    background:linear-gradient(180deg,rgba(84,43,24,0.78),rgba(35,19,18,0.9));
+    color:#f1dca5;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+}
+
+td,th{
+    padding:12px 14px;
+    text-align:left;
+    border-bottom:1px solid rgba(199,154,75,0.1);
+}
+
+tbody tr{
+    transition:background .22s ease,transform .22s ease;
+}
+
+tbody tr:hover{
+    background:rgba(255,255,255,0.03);
 }
 
 .status{
-    padding:4px 10px;
-    border-radius:6px;
-    font-weight:bold;
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:700;
+    display:inline-block;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    font-size:12px;
+    border:1px solid transparent;
 }
 
-.online{background:#0f5132;color:#00ffae;}
-.upcoming{background:#664d03;color:#ffd700;}
-.closed{background:#842029;color:#ff6b6b;}
+.online{
+    background:rgba(37,97,74,0.34);
+    color:#bff7df;
+    border-color:rgba(97,214,168,0.26);
+    box-shadow:0 0 18px rgba(65,180,126,0.12);
+}
+
+.upcoming{
+    background:rgba(133,90,17,0.34);
+    color:#ffe29f;
+    border-color:rgba(224,186,110,0.28);
+    box-shadow:0 0 18px rgba(224,186,110,0.12);
+}
+
+.closed{
+    background:rgba(115,31,24,0.34);
+    color:#ffbeb2;
+    border-color:rgba(202,94,71,0.26);
+    box-shadow:0 0 18px rgba(202,94,71,0.1);
+}
 
 .btn-link{
-    background:#00e0ff;
-    color:black;
-    padding:5px 10px;
-    border-radius:6px;
+    display:inline-block;
+    padding:7px 14px;
+    color:#1d0d07;
+    border-radius:999px;
+    font-weight:700;
     text-decoration:none;
-    font-weight:bold;
+    transition:.2s;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 10px 24px rgba(201,136,58,0.2);
+}
+
+.add-btn,
+.btn-link,
+.tcl-btn{
+    transition:all .25s ease;
+    position:relative;
+    overflow:hidden;
+}
+
+.add-btn:hover,
+.btn-link:hover,
+.tcl-btn:hover{
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 14px 30px rgba(201,136,58,0.32);
+}
+
+.add-btn::before,
+.btn-link::before,
+.tcl-btn::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.32),transparent);
+    transition:.55s;
+}
+
+.add-btn:hover::before,
+.btn-link:hover::before,
+.tcl-btn:hover::before{
+    left:100%;
+}
+
+.pagination-wrap{
+    display:flex;
+    justify-content:center;
+    margin-top:14px;
+}
+
+.pagination{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+    padding:10px 14px;
+    border-radius:14px;
+    border:1px solid rgba(199,154,75,0.16);
+    background:rgba(15,9,11,0.72);
+    box-shadow:0 10px 24px rgba(0,0,0,0.2);
+}
+
+.page-btn{
+    min-width:38px;
+    height:38px;
+    border:none;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:700;
+    color:#f4ead1;
+    background:rgba(54,28,22,0.92);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+    transition:all .22s ease;
+}
+
+.page-btn:hover{
+    transform:translateY(-2px);
+    background:rgba(109,54,33,0.92);
+}
+
+.page-btn.active{
+    color:#1d0d07;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 10px 24px rgba(201,136,58,0.28);
+}
+
+.tcl-box{
+    margin-top:18px;
+    padding:22px 18px;
+    border-radius:20px;
+    border:1px solid rgba(199,154,75,0.18);
+    background:
+        radial-gradient(circle at top right,rgba(224,186,110,0.1),transparent 30%),
+        linear-gradient(135deg,rgba(25,14,15,0.96),rgba(13,8,10,0.94));
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    box-shadow:0 18px 45px rgba(0,0,0,0.28);
+}
+
+.sponsored-label{
+    display:inline-block;
+    margin-bottom:10px;
+    padding:5px 12px;
+    border-radius:999px;
+    border:1px solid rgba(224,186,110,0.26);
+    background:rgba(58,30,21,0.72);
+    color:#f4d08b;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+}
+
+.tcl-title{
+    font-size:clamp(22px,1.6vw,24px);
+    color:#f4d08b;
+    margin-bottom:8px;
+    margin-top:0;
+    font-family:Palatino Linotype,Book Antiqua,Georgia,serif;
+    letter-spacing:.03em;
+}
+
+.tcl-desc{
+    font-size:13px;
+    color:#ccb998;
+    margin-bottom:16px;
+    line-height:1.6;
+    max-width:620px;
+}
+
+.tcl-btn{
+    display:inline-block;
+    padding:9px 18px;
+    color:#1d0d07;
+    border-radius:999px;
+    font-weight:700;
+    text-decoration:none;
+    transition:.2s;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 12px 28px rgba(201,136,58,0.26);
+}
+
+@media(max-width:700px){
+    .container{padding:18px 14px 30px}
+    .header{padding:24px 20px}
+    .header h1{font-size:28px}
+    .submit-box-inline{
+        width:100%;
+        margin-left:0;
+        text-align:center;
+        white-space:normal;
+    }
 }
 </style>
 </head>
 
 <body>
-
+<div class="viewport-fit">
+<div class="scale-frame" id="scaleFrame">
 <div class="container">
 
 <div class="header">
-<h2>Servers Tracker</h2>
+<h1>Servers Tracker</h1>
+<div class="disclaimer">This is an independent fan-made listing website. Not affiliated with any game publisher or official service.</div>
 </div>
 
 <div class="filter-bar">
+<label>Status:</label>
 <select onchange="filterServers(this.value)">
 <option value="all">All</option>
 <option value="online">Online</option>
@@ -88,10 +413,19 @@ th, td{
 <option value="closed">Closed</option>
 </select>
 
+<label>Sort:</label>
 <select onchange="sortServers(this.value)">
 <option value="newest">Newest</option>
 <option value="oldest">Oldest</option>
 </select>
+
+<a class="add-btn" href="https://tally.so/r/5Blzpb" target="_blank" rel="noreferrer">
++ Add Server
+</a>
+
+<div class="submit-box-inline">
+Please submit your server in advance. Listing may take time, so submit early.
+</div>
 </div>
 
 <table id="table">
@@ -106,138 +440,231 @@ th, td{
 <th>Discord</th>
 </tr>
 </thead>
-
 <tbody id="tableBody"></tbody>
 </table>
 
+<div class="pagination-wrap">
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<div class="tcl-box">
+    <div class="sponsored-label">Sponsored</div>
+    <div class="tcl-title">The Cursed Land</div>
+    <div class="tcl-desc">
+        Looking for a modern MMORPG experience?<br>
+        Cross-platform gameplay on PC and Mobile, active events and an evolving world.
+    </div>
+    <a class="tcl-btn" href="https://www.thecursedland.com/" target="_blank" rel="noreferrer">
+        Play Now
+    </a>
+</div>
+
+</div>
 </div>
 
 <script>
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEgo-sYLiHKhWQlswaoM7HsMJ4zuc4KRZzoGfAAyewEmyEiX6OAozrsOiVEyueVdQaXSqqq5RCGUhy/pub?output=csv";
 
-let currentFilter="all";
-let currentSort="newest";
+let currentFilter = "all";
+let currentSort = "newest";
+let currentPage = 1;
+const rowsPerPage = 5;
 
 function fetchData(){
 fetch(CSV_URL)
-.then(res => res.text())
-.then(csv => {
+.then(function(res){ return res.text(); })
+.then(function(csv){
+    let rows = csv.split("\n").slice(1);
+    let html = "";
 
-let rows = csv.split("\n").slice(1);
-let html = "";
+    rows.forEach(function(row){
+        let cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+        if(!cols) return;
 
-rows.forEach(row=>{
+        cols = cols.map(function(c){
+            return c.replace(/"/g,"").trim();
+        });
 
-let cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-if(!cols) return;
+        let name = cols[3];
+        let owner = cols[4];
+        let date = cols[5];
+        let status = (cols[6] || "upcoming").toLowerCase();
+        let website = normalizeUrl(cols[7]);
+        let discord = normalizeUrl(cols[8]);
 
-cols = cols.map(c => c.replace(/"/g,""));
+        if(!name) return;
 
-let name = cols[3];
-let owner = cols[4];
-let date = cols[5];
-let status = (cols[6] || "upcoming").toLowerCase();
-let website = cols[7];
-let discord = cols[8];
-
-if(!name) return;
-
-html += `
+        html += `
 <tr data-status="${status}" data-date="${date}">
 <td>${name}</td>
-<td>${owner}</td>
+<td>${owner || "-"}</td>
 <td>${formatDate(date)}</td>
 <td class="uptime"></td>
 <td><span class="status ${status}">${capitalize(status)}</span></td>
-<td>${website ? `<a class="btn-link" href="${website}" target="_blank">Visit</a>` : "-"}</td>
-<td>${discord ? `<a class="btn-link" href="${discord}" target="_blank">Join</a>` : "-"}</td>
+<td>${website ? `<a class="btn-link" href="${website}" target="_blank" rel="noreferrer">Visit</a>` : "-"}</td>
+<td>${discord ? `<a class="btn-link" href="${discord}" target="_blank" rel="noreferrer">Join</a>` : "-"}</td>
 </tr>`;
-});
+    });
 
-document.getElementById("tableBody").innerHTML = html;
-
-apply();
-updateUptime();
+    document.getElementById("tableBody").innerHTML = html;
+    apply();
+    updateUptime();
 });
 }
 
-function filterServers(s){
-currentFilter=s;
+function normalizeUrl(url){
+    if(!url) return "";
+    return /^https?:\/\//i.test(url) ? url : "https://" + url;
+}
+
+function filterServers(status){
+currentFilter = status;
+currentPage = 1;
 apply();
 }
 
-function sortServers(s){
-currentSort=s;
+function sortServers(sort){
+currentSort = sort;
+currentPage = 1;
 apply();
 }
 
 function apply(){
-let t=document.querySelector("#table tbody");
-let rows=[...t.querySelectorAll("tr")];
+let tableBody = document.getElementById("tableBody");
+let rows = Array.from(tableBody.querySelectorAll("tr"));
+let order = { upcoming: 1, online: 2, closed: 3 };
 
-rows.forEach(r=>{
-r.style.display=(currentFilter==="all"||r.dataset.status===currentFilter)?"":"none";
+rows.sort(function(a,b){
+    let statusA = order[a.dataset.status] || 99;
+    let statusB = order[b.dataset.status] || 99;
+
+    if(statusA !== statusB){
+        return statusA - statusB;
+    }
+
+    return currentSort === "newest"
+        ? new Date(b.dataset.date) - new Date(a.dataset.date)
+        : new Date(a.dataset.date) - new Date(b.dataset.date);
 });
 
-rows.sort((a,b)=>{
-return currentSort==="newest"
-? new Date(b.dataset.date)-new Date(a.dataset.date)
-: new Date(a.dataset.date)-new Date(b.dataset.date);
+rows.forEach(function(row){
+    tableBody.appendChild(row);
 });
 
-rows.forEach(r=>t.appendChild(r));
+let filteredRows = rows.filter(function(row){
+    return currentFilter === "all" || row.dataset.status === currentFilter;
+});
+
+let totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+if(currentPage > totalPages) currentPage = totalPages;
+
+let start = (currentPage - 1) * rowsPerPage;
+let end = start + rowsPerPage;
+
+rows.forEach(function(row){
+    row.style.display = "none";
+});
+
+filteredRows.forEach(function(row,index){
+    row.style.display = (index >= start && index < end) ? "" : "none";
+});
+
+renderPagination(totalPages);
+fitPageToViewport();
+}
+
+function renderPagination(totalPages){
+let pagination = document.getElementById("pagination");
+if(!pagination) return;
+
+if(totalPages <= 1){
+    pagination.innerHTML = "";
+    return;
+}
+
+let html = "";
+for(let i = 1; i <= totalPages; i++){
+    html += '<button class="page-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+}
+
+pagination.innerHTML = html;
+}
+
+function goToPage(page){
+currentPage = page;
+apply();
+}
+
+function fitPageToViewport(){
+let frame = document.getElementById("scaleFrame");
+if(!frame) return;
+
+frame.style.transform = "scale(1)";
+
+requestAnimationFrame(function(){
+    let availableWidth = window.innerWidth - 12;
+    let availableHeight = window.innerHeight - 12;
+    let naturalWidth = frame.scrollWidth;
+    let naturalHeight = frame.scrollHeight;
+    let scale = Math.min(1, availableWidth / naturalWidth, availableHeight / naturalHeight);
+
+    if(!Number.isFinite(scale) || scale <= 0){
+        scale = 1;
+    }
+
+    frame.style.transform = "scale(" + scale + ")";
+});
 }
 
 function calculateUptime(date){
 const now = new Date();
 const start = new Date(date);
-let diff = Math.floor((now - start)/86400000);
+let diff = Math.floor((now - start) / 86400000);
 
 if(diff < 1) return "few hours";
 if(diff === 1) return "1 day";
 if(diff < 7) return diff + " days";
 
-let w = Math.floor(diff/7);
-if(w < 4) return w + " weeks";
+let weeks = Math.floor(diff / 7);
+if(weeks < 4) return weeks + " weeks";
 
-let m = Math.floor(diff/30);
-if(m < 12) return m + " months";
+let months = Math.floor(diff / 30);
+if(months < 12) return months + " months";
 
-return Math.floor(diff/365) + " years";
+return Math.floor(diff / 365) + " years";
 }
 
 function updateUptime(){
 const now = new Date();
+let changed = false;
 
-document.querySelectorAll("#table tbody tr").forEach(row=>{
-let date = new Date(row.dataset.date);
-let status = row.dataset.status;
+document.querySelectorAll("#tableBody tr").forEach(function(row){
+    let date = new Date(row.dataset.date);
+    let status = row.dataset.status;
+    let uptime = row.querySelector(".uptime");
+    let statusEl = row.querySelector(".status");
 
-let uptime = row.querySelector(".uptime");
-let statusEl = row.querySelector(".status");
+    if(status === "upcoming" && now >= date){
+        row.dataset.status = "online";
+        statusEl.className = "status online";
+        statusEl.innerText = "Online";
+        status = "online";
+        changed = true;
+    }
 
-if(status==="upcoming" && now >= date){
-row.dataset.status="online";
-statusEl.className="status online";
-statusEl.innerText="Online";
-status="online";
-}
-
-uptime.innerText = status==="online" ? calculateUptime(date) : "-";
+    uptime.innerText = status === "online" ? calculateUptime(date) : "-";
 });
+
+if(changed){
+    apply();
+} else {
+    fitPageToViewport();
+}
 }
 
-function formatDate(d){
-return new Date(d).toLocaleDateString("en-US");
-}
-
-function capitalize(s){
-return s.charAt(0).toUpperCase()+s.slice(1);
-}
-
-// INIT
 fetchData();
 setInterval(updateUptime,1000);
+window.addEventListener("resize", fitPageToViewport);
 </script>
 
 </body>
