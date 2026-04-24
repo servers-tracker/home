@@ -715,6 +715,7 @@ fetch(CSV_URL)
 .then(function(csv){
     let rows = csv.replace(/^\uFEFF/, "").split(/\r?\n/).slice(1);
     let html = "";
+    let seenServers = new Set();
 
     rows.forEach(function(row,rowIndex){
         let cols = parseCSVRow(row);
@@ -726,8 +727,12 @@ fetch(CSV_URL)
         let status = (cols[6] || "upcoming").toLowerCase();
         let website = normalizeUrl(cols[7]);
         let discord = normalizeUrl(cols[8]);
+        let serverKey = normalizeServerKey(name);
 
-        if(!name) return;
+        if(!serverKey) return;
+        if(seenServers.has(serverKey)) return;
+
+        seenServers.add(serverKey);
 
         html += `
 <tr data-row-id="row-${rowIndex}" data-status="${escapeAttribute(status)}" data-date="${escapeAttribute(date)}" data-name="${escapeAttribute(name)}" data-owner="${escapeAttribute(owner || "-")}">
@@ -755,6 +760,13 @@ fetch(CSV_URL)
 function normalizeUrl(url){
     if(!url) return "";
     return /^https?:\/\//i.test(url) ? url : "https://" + url;
+}
+
+function normalizeServerKey(value){
+    return String(value || "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLowerCase();
 }
 
 function parseCSVRow(row){
