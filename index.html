@@ -183,10 +183,20 @@ table{
     min-height:360px;
 }
 
+.table-stage.is-loading table,
+.table-stage.is-loading .pagination-wrap{
+    visibility:hidden;
+    pointer-events:none;
+}
+
+.table-stage.is-loading .search-results{
+    display:none !important;
+}
+
 .loading-panel{
     position:absolute;
     inset:0;
-    z-index:3;
+    z-index:30;
     display:none;
     align-items:center;
     justify-content:center;
@@ -674,7 +684,7 @@ tbody tr:hover{
 </div>
 </div>
 
-<div class="table-stage">
+<div class="table-stage is-loading">
 <div class="loading-panel visible" id="loadingPanel">
     <div class="loading-card">
         <div class="loading-spinner"></div>
@@ -887,11 +897,16 @@ function highlightText(text, query){
 }
 
 function setLoading(isVisible, message, isError){
+    let stage = document.querySelector(".table-stage");
     let panel = document.getElementById("loadingPanel");
     let title = document.getElementById("loadingTitle");
     let copy = document.getElementById("loadingCopy");
 
     if(!panel) return;
+
+    if(stage){
+        stage.classList.toggle("is-loading", isVisible);
+    }
 
     panel.classList.toggle("visible", isVisible);
     panel.classList.toggle("error", !!isError);
