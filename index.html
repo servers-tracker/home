@@ -445,6 +445,19 @@ Please submit your server in advance. Listing may take time, so submit early.
     <a class="btn-link" href="https://discord.com/invite/YzZtvB9Zr7" target="_blank">Join</a>
 </td>
 </tr>
+<tr data-status="upcoming" data-date="2026-05-01">
+<td>Lunesha</td>
+<td>[SA]DREAMER - dreamer1047</td>
+<td>May 1, 2026</td>
+<td class="uptime"></td>
+<td><span class="status upcoming">Upcoming</span></td>
+<td>
+    <a class="btn-link" href="https://lunesha.to/" target="_blank">Visit</a>
+</td>
+<td>
+    <a class="btn-link" href="https://discord.gg/9NNr8uqjjh" target="_blank">Join</a>
+</td>
+</tr>
 </tbody>
 </table>
 
@@ -519,11 +532,23 @@ function calculateUptime(startDate){
 }
 
 function updateUptime(){
+    const now = new Date();
+
     document.querySelectorAll("#table tbody tr").forEach(row=>{
-        const date = row.dataset.date;
-        const status = row.dataset.status;
+        const date = new Date(row.dataset.date);
+        let status = row.dataset.status;
 
         const uptimeCell = row.querySelector(".uptime");
+        const statusEl = row.querySelector(".status");
+
+        // 🔥 AUTO CHANGE
+        if(status === "upcoming" && now >= date){
+            status = "online";
+
+            row.dataset.status = "online";
+            statusEl.className = "status online";
+            statusEl.innerText = "Online";
+        }
 
         if(status === "online"){
             uptimeCell.innerText = calculateUptime(date);
