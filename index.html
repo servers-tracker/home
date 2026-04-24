@@ -356,8 +356,17 @@ tbody tr:hover{
 
 .pagination-wrap{
     display:flex;
-    justify-content:center;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
     margin-top:14px;
+}
+
+.pagination-side{
+    flex:1 1 320px;
+    display:flex;
+    justify-content:center;
 }
 
 .pagination{
@@ -395,6 +404,123 @@ tbody tr:hover{
     color:#1d0d07;
     background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
     box-shadow:0 10px 24px rgba(201,136,58,0.28);
+}
+
+.search-side{
+    flex:0 1 340px;
+    width:min(340px,100%);
+}
+
+.search-shell{
+    display:grid;
+    gap:8px;
+}
+
+.search-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.search-label{
+    color:#cfbc98;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+}
+
+.search-meta{
+    color:#bfa77d;
+    font-size:11px;
+}
+
+.search-input{
+    width:100%;
+    padding:10px 14px;
+    border-radius:12px;
+    border:1px solid rgba(199,154,75,0.18);
+    background:rgba(15,9,11,0.76);
+    color:#f4ead1;
+    outline:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.search-input:focus{
+    border-color:rgba(224,186,110,0.45);
+    box-shadow:0 0 0 3px rgba(199,154,75,0.12);
+}
+
+.search-results{
+    display:none;
+    gap:8px;
+    padding:10px;
+    border-radius:14px;
+    border:1px solid rgba(199,154,75,0.14);
+    background:rgba(15,9,11,0.72);
+    box-shadow:0 10px 24px rgba(0,0,0,0.2);
+}
+
+.search-results.visible{
+    display:grid;
+}
+
+.search-result-btn{
+    width:100%;
+    padding:10px 12px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    text-align:left;
+    color:#f4ead1;
+    background:rgba(44,24,20,0.9);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+    transition:all .2s ease;
+}
+
+.search-result-btn:hover{
+    transform:translateY(-1px);
+    background:rgba(76,40,28,0.92);
+}
+
+.search-result-title{
+    display:block;
+    margin-bottom:4px;
+    color:#f4d08b;
+    font-weight:700;
+}
+
+.search-result-copy{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    color:#ccb998;
+    font-size:12px;
+}
+
+.search-empty{
+    padding:10px 12px;
+    border-radius:12px;
+    color:#ccb998;
+    font-size:12px;
+    background:rgba(44,24,20,0.9);
+}
+
+.search-hit{
+    background:rgba(120,65,36,0.14);
+    box-shadow:inset 0 0 0 1px rgba(224,186,110,0.12);
+}
+
+.search-focus{
+    background:rgba(120,65,36,0.2) !important;
+    box-shadow:inset 0 0 0 1px rgba(240,201,120,0.3), 0 0 18px rgba(201,136,58,0.12);
+}
+
+.match-mark{
+    padding:0 4px;
+    border-radius:6px;
+    background:rgba(240,201,120,0.22);
+    color:#ffe5b2;
 }
 
 .tcl-box{
@@ -460,6 +586,9 @@ tbody tr:hover{
     .container{padding:18px 14px 30px}
     .header{padding:24px 20px}
     .header h1{font-size:28px}
+    .pagination-wrap{justify-content:center}
+    .pagination-side,
+    .search-side{flex:1 1 100%; width:100%}
     .submit-box-inline{
         width:100%;
         margin-left:0;
@@ -500,7 +629,7 @@ tbody tr:hover{
 </a>
 
 <div class="submit-box-inline">
-Submissions are automated. It may take a few moments to appear.
+Submissions are automated. It may take a few moments to appear!
 </div>
 </div>
 
@@ -529,7 +658,25 @@ Submissions are automated. It may take a few moments to appear.
 </table>
 
 <div class="pagination-wrap">
-    <div class="pagination" id="pagination"></div>
+    <div class="pagination-side">
+        <div class="pagination" id="pagination"></div>
+    </div>
+    <div class="search-side">
+        <div class="search-shell">
+            <div class="search-head">
+                <div class="search-label">Search</div>
+                <div class="search-meta" id="searchMeta"></div>
+            </div>
+            <input
+                class="search-input"
+                id="searchInput"
+                type="search"
+                placeholder="Search server or owner"
+                autocomplete="off"
+            >
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
 </div>
 </div>
 
@@ -554,6 +701,9 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQEgo-sYLiHKhWQ
 let currentFilter = "all";
 let currentSort = "newest";
 let currentPage = 1;
+let currentSearch = "";
+let selectedSearchRowId = "";
+let shouldJumpToSearchResult = false;
 const rowsPerPage = 5;
 
 function fetchData(){
@@ -565,7 +715,7 @@ fetch(CSV_URL)
     let rows = csv.split("\n").slice(1);
     let html = "";
 
-    rows.forEach(function(row){
+    rows.forEach(function(row,rowIndex){
         let cols = row.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
         if(!cols) return;
 
@@ -583,14 +733,14 @@ fetch(CSV_URL)
         if(!name) return;
 
         html += `
-<tr data-status="${status}" data-date="${date}">
-<td>${name}</td>
-<td>${owner || "-"}</td>
+<tr data-row-id="row-${rowIndex}" data-status="${escapeAttribute(status)}" data-date="${escapeAttribute(date)}" data-name="${escapeAttribute(name)}" data-owner="${escapeAttribute(owner || "-")}">
+<td class="cell-name">${escapeHtml(name)}</td>
+<td class="cell-owner">${escapeHtml(owner || "-")}</td>
 <td>${formatDate(date)}</td>
 <td class="uptime"></td>
 <td><span class="status ${status}">${capitalize(status)}</span></td>
-<td>${website ? `<a class="btn-link" href="${website}" target="_blank" rel="noreferrer">Visit</a>` : "-"}</td>
-<td>${discord ? `<a class="btn-link" href="${discord}" target="_blank" rel="noreferrer">Join</a>` : "-"}</td>
+<td>${website ? `<a class="btn-link" href="${escapeAttribute(website)}" target="_blank" rel="noreferrer">Visit</a>` : "-"}</td>
+<td>${discord ? `<a class="btn-link" href="${escapeAttribute(discord)}" target="_blank" rel="noreferrer">Join</a>` : "-"}</td>
 </tr>`;
     });
 
@@ -628,6 +778,34 @@ function capitalize(value){
     return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function escapeHtml(value){
+    return String(value || "").replace(/[&<>"']/g, function(char){
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "\"": "&quot;",
+            "'": "&#39;"
+        }[char];
+    });
+}
+
+function escapeAttribute(value){
+    return escapeHtml(value);
+}
+
+function escapeRegex(value){
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function highlightText(text, query){
+    let safeText = String(text || "");
+    if(!query) return escapeHtml(safeText);
+
+    let matcher = new RegExp("(" + escapeRegex(query) + ")", "ig");
+    return escapeHtml(safeText).replace(matcher, "<mark class=\"match-mark\">$1</mark>");
+}
+
 function setLoading(isVisible, message, isError){
     let panel = document.getElementById("loadingPanel");
     let title = document.getElementById("loadingTitle");
@@ -661,6 +839,14 @@ currentPage = 1;
 apply();
 }
 
+function setSearch(value){
+currentSearch = value.trim().toLowerCase();
+currentPage = 1;
+selectedSearchRowId = "";
+shouldJumpToSearchResult = true;
+apply();
+}
+
 function apply(){
 let tableBody = document.getElementById("tableBody");
 let rows = Array.from(tableBody.querySelectorAll("tr"));
@@ -687,7 +873,34 @@ let filteredRows = rows.filter(function(row){
     return currentFilter === "all" || row.dataset.status === currentFilter;
 });
 
+let searchMatches = [];
+if(currentSearch){
+    searchMatches = filteredRows
+        .map(function(row,index){
+            let matches = matchesSearch(row);
+            if(!matches) return null;
+
+            return {
+                row: row,
+                rowId: row.dataset.rowId,
+                name: row.dataset.name || "",
+                owner: row.dataset.owner || "",
+                page: Math.floor(index / rowsPerPage) + 1
+            };
+        })
+        .filter(Boolean);
+}
+
 let totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+
+if(shouldJumpToSearchResult){
+    currentPage = searchMatches.length ? searchMatches[0].page : 1;
+    if(searchMatches.length){
+        selectedSearchRowId = searchMatches[0].rowId;
+    }
+    shouldJumpToSearchResult = false;
+}
+
 if(currentPage > totalPages) currentPage = totalPages;
 
 let start = (currentPage - 1) * rowsPerPage;
@@ -695,14 +908,41 @@ let end = start + rowsPerPage;
 
 rows.forEach(function(row){
     row.style.display = "none";
+    row.classList.remove("search-hit", "search-focus");
+    let nameCell = row.querySelector(".cell-name");
+    let ownerCell = row.querySelector(".cell-owner");
+
+    if(nameCell){
+        nameCell.innerHTML = highlightText(row.dataset.name || "", currentSearch);
+    }
+
+    if(ownerCell){
+        ownerCell.innerHTML = highlightText(row.dataset.owner || "", currentSearch);
+    }
 });
 
 filteredRows.forEach(function(row,index){
     row.style.display = (index >= start && index < end) ? "" : "none";
 });
 
+searchMatches.forEach(function(match){
+    match.row.classList.add("search-hit");
+    if(match.rowId === selectedSearchRowId){
+        match.row.classList.add("search-focus");
+    }
+});
+
 renderPagination(totalPages);
+renderSearchResults(searchMatches);
 fitPageToViewport();
+}
+
+function matchesSearch(row){
+    if(!currentSearch) return false;
+
+    let name = (row.dataset.name || "").toLowerCase();
+    let owner = (row.dataset.owner || "").toLowerCase();
+    return name.includes(currentSearch) || owner.includes(currentSearch);
 }
 
 function renderPagination(totalPages){
@@ -723,6 +963,46 @@ pagination.innerHTML = html;
 }
 
 function goToPage(page){
+currentPage = page;
+apply();
+}
+
+function renderSearchResults(matches){
+let resultsBox = document.getElementById("searchResults");
+let searchMeta = document.getElementById("searchMeta");
+
+if(!resultsBox || !searchMeta) return;
+
+if(!currentSearch){
+    searchMeta.textContent = "";
+    resultsBox.classList.remove("visible");
+    resultsBox.innerHTML = "";
+    return;
+}
+
+if(!matches.length){
+    searchMeta.textContent = "No match";
+    resultsBox.classList.add("visible");
+    resultsBox.innerHTML = '<div class="search-empty">No server or owner matched your search.</div>';
+    return;
+}
+
+searchMeta.textContent = matches.length + (matches.length === 1 ? " match" : " matches");
+resultsBox.classList.add("visible");
+resultsBox.innerHTML = matches.slice(0, 5).map(function(match){
+    return '' +
+        '<button class="search-result-btn" onclick="goToSearchResult(\'' + match.rowId + '\',' + match.page + ')">' +
+            '<span class="search-result-title">' + highlightText(match.name, currentSearch) + '</span>' +
+            '<span class="search-result-copy">' +
+                '<span>' + highlightText(match.owner, currentSearch) + '</span>' +
+                '<span>Page ' + match.page + '</span>' +
+            '</span>' +
+        '</button>';
+}).join("");
+}
+
+function goToSearchResult(rowId, page){
+selectedSearchRowId = rowId;
 currentPage = page;
 apply();
 }
@@ -797,6 +1077,9 @@ if(changed){
 fetchData();
 setInterval(updateUptime,1000);
 window.addEventListener("resize", fitPageToViewport);
+document.getElementById("searchInput").addEventListener("input", function(event){
+    setSearch(event.target.value);
+});
 </script>
 
 </body>
