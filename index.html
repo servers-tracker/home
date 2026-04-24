@@ -356,15 +356,17 @@ tbody tr:hover{
 
 .pagination-wrap{
     display:flex;
-    align-items:center;
-    justify-content:center;
+    align-items:flex-start;
+    justify-content:space-between;
     gap:16px;
     flex-wrap:wrap;
     margin-top:14px;
+    position:relative;
+    z-index:5;
 }
 
 .pagination-side{
-    flex:0 1 auto;
+    flex:1 1 320px;
     display:flex;
     justify-content:center;
 }
@@ -419,14 +421,8 @@ tbody tr:hover{
 .search-shell{
     display:grid;
     gap:8px;
-}
-
-.search-floating{
-    position:absolute;
-    top:18px;
-    right:18px;
-    width:min(340px, calc(100% - 36px));
-    z-index:4;
+    position:relative;
+    z-index:8;
 }
 
 .search-head{
@@ -466,9 +462,14 @@ tbody tr:hover{
 
 .search-results{
     display:none;
+    position:absolute;
+    top:calc(100% + 10px);
+    left:0;
+    right:0;
+    z-index:20;
     gap:8px;
     padding:10px;
-    max-height:286px;
+    max-height:320px;
     overflow-y:auto;
     overscroll-behavior:contain;
     border-radius:14px;
@@ -553,15 +554,10 @@ tbody tr:hover{
     color:#ffe5b2;
 }
 
-.sponsored-area{
-    position:relative;
-    margin-top:18px;
-}
-
 .tcl-box{
-    margin-top:0;
-    min-height:320px;
-    padding:26px 380px 26px 24px;
+    margin-top:18px;
+    min-height:260px;
+    padding:22px 18px;
     border-radius:20px;
     border:1px solid rgba(199,154,75,0.18);
     background:
@@ -625,14 +621,9 @@ tbody tr:hover{
     .pagination-wrap{justify-content:center}
     .pagination-side,
     .search-side{flex:1 1 100%; width:100%}
-    .search-floating{
+    .search-results{
         position:static;
-        width:100%;
-        margin-bottom:12px;
-    }
-    .sponsored-area{
-        display:grid;
-        gap:12px;
+        max-height:260px;
     }
     .tcl-box{
         min-height:auto;
@@ -711,11 +702,7 @@ tbody tr:hover{
     <div class="pagination-side">
         <div class="pagination" id="pagination"></div>
     </div>
- </div>
-</div>
-
-<div class="sponsored-area">
-    <div class="search-floating">
+    <div class="search-side">
         <div class="search-shell">
             <div class="search-head">
                 <div class="search-label">Search</div>
@@ -731,17 +718,18 @@ tbody tr:hover{
             <div class="search-results" id="searchResults"></div>
         </div>
     </div>
-    <div class="tcl-box">
-        <div class="sponsored-label">Sponsored</div>
-        <div class="tcl-title">The Cursed Land</div>
-        <div class="tcl-desc">
-            Looking for a modern MMORPG experience?<br>
-            Cross-platform gameplay on PC and Mobile, active events and an evolving world.
-        </div>
-        <a class="tcl-btn" href="https://www.thecursedland.com/" target="_blank" rel="noreferrer">
-            Play Now
-        </a>
+</div>
+
+<div class="tcl-box">
+    <div class="sponsored-label">Sponsored</div>
+    <div class="tcl-title">The Cursed Land</div>
+    <div class="tcl-desc">
+        Looking for a modern MMORPG experience?<br>
+        Cross-platform gameplay on PC and Mobile, active events and an evolving world.
     </div>
+    <a class="tcl-btn" href="https://www.thecursedland.com/" target="_blank" rel="noreferrer">
+        Play Now
+    </a>
 </div>
 
 </div>
