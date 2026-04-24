@@ -356,15 +356,15 @@ tbody tr:hover{
 
 .pagination-wrap{
     display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
+    align-items:center;
+    justify-content:center;
     gap:16px;
     flex-wrap:wrap;
     margin-top:14px;
 }
 
 .pagination-side{
-    flex:1 1 320px;
+    flex:0 1 auto;
     display:flex;
     justify-content:center;
 }
@@ -421,6 +421,14 @@ tbody tr:hover{
     gap:8px;
 }
 
+.search-floating{
+    position:absolute;
+    top:18px;
+    right:18px;
+    width:min(340px, calc(100% - 36px));
+    z-index:4;
+}
+
 .search-head{
     display:flex;
     align-items:center;
@@ -460,6 +468,9 @@ tbody tr:hover{
     display:none;
     gap:8px;
     padding:10px;
+    max-height:286px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
     border-radius:14px;
     border:1px solid rgba(199,154,75,0.14);
     background:rgba(15,9,11,0.72);
@@ -468,6 +479,20 @@ tbody tr:hover{
 
 .search-results.visible{
     display:grid;
+}
+
+.search-results::-webkit-scrollbar{
+    width:8px;
+}
+
+.search-results::-webkit-scrollbar-thumb{
+    border-radius:999px;
+    background:rgba(201,136,58,0.5);
+}
+
+.search-results::-webkit-scrollbar-track{
+    background:rgba(255,255,255,0.03);
+    border-radius:999px;
 }
 
 .search-result-btn{
@@ -528,9 +553,15 @@ tbody tr:hover{
     color:#ffe5b2;
 }
 
-.tcl-box{
+.sponsored-area{
+    position:relative;
     margin-top:18px;
-    padding:22px 18px;
+}
+
+.tcl-box{
+    margin-top:0;
+    min-height:320px;
+    padding:26px 380px 26px 24px;
     border-radius:20px;
     border:1px solid rgba(199,154,75,0.18);
     background:
@@ -594,6 +625,19 @@ tbody tr:hover{
     .pagination-wrap{justify-content:center}
     .pagination-side,
     .search-side{flex:1 1 100%; width:100%}
+    .search-floating{
+        position:static;
+        width:100%;
+        margin-bottom:12px;
+    }
+    .sponsored-area{
+        display:grid;
+        gap:12px;
+    }
+    .tcl-box{
+        min-height:auto;
+        padding:22px 18px;
+    }
     .submit-box-inline{
         width:100%;
         margin-left:0;
@@ -667,7 +711,11 @@ tbody tr:hover{
     <div class="pagination-side">
         <div class="pagination" id="pagination"></div>
     </div>
-    <div class="search-side">
+ </div>
+</div>
+
+<div class="sponsored-area">
+    <div class="search-floating">
         <div class="search-shell">
             <div class="search-head">
                 <div class="search-label">Search</div>
@@ -683,19 +731,17 @@ tbody tr:hover{
             <div class="search-results" id="searchResults"></div>
         </div>
     </div>
-</div>
-</div>
-
-<div class="tcl-box">
-    <div class="sponsored-label">Sponsored</div>
-    <div class="tcl-title">The Cursed Land</div>
-    <div class="tcl-desc">
-        Looking for a modern MMORPG experience?<br>
-        Cross-platform gameplay on PC and Mobile, active events and an evolving world.
+    <div class="tcl-box">
+        <div class="sponsored-label">Sponsored</div>
+        <div class="tcl-title">The Cursed Land</div>
+        <div class="tcl-desc">
+            Looking for a modern MMORPG experience?<br>
+            Cross-platform gameplay on PC and Mobile, active events and an evolving world.
+        </div>
+        <a class="tcl-btn" href="https://www.thecursedland.com/" target="_blank" rel="noreferrer">
+            Play Now
+        </a>
     </div>
-    <a class="tcl-btn" href="https://www.thecursedland.com/" target="_blank" rel="noreferrer">
-        Play Now
-    </a>
 </div>
 
 </div>
@@ -1061,7 +1107,7 @@ if(!matches.length){
 
 searchMeta.textContent = matches.length + (matches.length === 1 ? " match" : " matches");
 resultsBox.classList.add("visible");
-resultsBox.innerHTML = matches.slice(0, 5).map(function(match){
+resultsBox.innerHTML = matches.map(function(match){
     return '' +
         '<button class="search-result-btn" onclick="goToSearchResult(\'' + match.rowId + '\',' + match.page + ')">' +
             '<span class="search-result-title">' + highlightText(match.name, currentSearch) + '</span>' +
