@@ -1233,7 +1233,7 @@ document.querySelectorAll("#tableBody tr").forEach(function(row){
         changed = true;
     }
 
-    uptime.innerText = status === "online" ? calculateUptime(date) : "-";
+    uptime.innerText = status === "online" ? "≈ " + calculateUptime(date) : "-";
 });
 
 if(changed){
