@@ -6,6 +6,12 @@
 <title>MMO Server Tracker</title>
 
 <style>
+html{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
 body{
     margin:0;
     font-family:Trebuchet MS,Segoe UI,sans-serif;
@@ -14,7 +20,10 @@ body{
         radial-gradient(circle at 18% 0%,rgba(210,120,38,0.18),transparent 30%),
         radial-gradient(circle at 85% 14%,rgba(166,45,24,0.22),transparent 28%),
         linear-gradient(180deg,#0a0607 0%,#14090b 50%,#080405 100%);
+    width:100%;
+    height:100%;
     min-height:100vh;
+    overflow:hidden;
     position:relative;
 }
 
@@ -34,15 +43,30 @@ body::before{
 .container{
     max-width:1180px;
     margin:0 auto;
-    padding:28px 20px 42px;
+    padding:20px 18px 24px;
+}
+
+.viewport-fit{
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:6px 0;
+}
+
+.scale-frame{
+    transform-origin:top center;
+    will-change:transform;
 }
 
 .header{
     position:relative;
     overflow:hidden;
-    padding:28px 30px;
+    padding:22px 24px;
     border-radius:20px;
-    margin-bottom:30px;
+    margin-bottom:18px;
     border:1px solid rgba(199,154,75,0.25);
     background:
         radial-gradient(circle at top right,rgba(224,186,110,0.12),transparent 28%),
@@ -71,20 +95,20 @@ body::before{
     margin:0 0 8px;
     color:#f4d08b;
     font-family:Palatino Linotype,Book Antiqua,Georgia,serif;
-    font-size:34px;
+    font-size:clamp(28px,2vw,34px);
     letter-spacing:.04em;
     text-shadow:0 0 18px rgba(244,208,139,0.18);
 }
 
 .disclaimer{
-    font-size:13px;
+    font-size:12px;
     color:#d0bea0;
     max-width:760px;
     line-height:1.6;
 }
 
 select{
-    padding:10px 14px;
+    padding:8px 12px;
     background:rgba(13,8,10,0.92);
     color:#f4ead1;
     border:1px solid rgba(199,154,75,0.24);
@@ -119,7 +143,7 @@ th{
 }
 
 td,th{
-    padding:14px 16px;
+    padding:12px 14px;
     text-align:left;
     border-bottom:1px solid rgba(199,154,75,0.1);
 }
@@ -171,9 +195,9 @@ a{color:#f1dca5}
     align-items:center;
     flex-wrap:wrap;
     gap:12px;
-    margin-top:18px;
-    margin-bottom:24px;
-    padding:18px 20px;
+    margin-top:12px;
+    margin-bottom:18px;
+    padding:14px 16px;
     border-radius:16px;
     border:1px solid rgba(199,154,75,0.15);
     background:rgba(15,9,11,0.72);
@@ -189,7 +213,7 @@ a{color:#f1dca5}
 
 .add-btn{
     margin-left:8px;
-    padding:10px 16px;
+    padding:8px 14px;
     color:#1d0d07;
     border-radius:999px;
     font-weight:700;
@@ -204,7 +228,7 @@ a{color:#f1dca5}
 
 .btn-link{
     display:inline-block;
-    padding:8px 15px;
+    padding:7px 14px;
     color:#1d0d07;
     border-radius:999px;
     font-weight:700;
@@ -215,8 +239,8 @@ a{color:#f1dca5}
 }
 
 .tcl-box{
-    margin-top:38px;
-    padding:34px 24px;
+    margin-top:18px;
+    padding:22px 18px;
     border-radius:20px;
     border:1px solid rgba(199,154,75,0.18);
     background:
@@ -231,25 +255,25 @@ a{color:#f1dca5}
 }
 
 .tcl-title{
-    font-size:24px;
+    font-size:clamp(22px,1.6vw,24px);
     color:#f4d08b;
-    margin-bottom:10px;
+    margin-bottom:8px;
     margin-top:0;
     font-family:Palatino Linotype,Book Antiqua,Georgia,serif;
     letter-spacing:.03em;
 }
 
 .tcl-desc{
-    font-size:14px;
+    font-size:13px;
     color:#ccb998;
-    margin-bottom:22px;
-    line-height:1.7;
+    margin-bottom:16px;
+    line-height:1.6;
     max-width:620px;
 }
 
 .tcl-btn{
     display:inline-block;
-    padding:11px 22px;
+    padding:9px 18px;
     color:#1d0d07;
     border-radius:999px;
     font-weight:700;
@@ -305,7 +329,7 @@ a{color:#f1dca5}
     color:#d1bf9f;
     background:rgba(33,17,15,0.76);
     border:1px solid rgba(199,154,75,0.2);
-    padding:8px 12px;
+    padding:7px 10px;
     border-radius:10px;
     white-space:nowrap;
     box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
@@ -314,6 +338,49 @@ a{color:#f1dca5}
 .submit-box-inline:hover{
     color:#f4d08b;
     border-color:rgba(224,186,110,0.42);
+}
+
+.pagination-wrap{
+    display:flex;
+    justify-content:center;
+    margin-top:14px;
+}
+
+.pagination{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+    padding:10px 14px;
+    border-radius:14px;
+    border:1px solid rgba(199,154,75,0.16);
+    background:rgba(15,9,11,0.72);
+    box-shadow:0 10px 24px rgba(0,0,0,0.2);
+}
+
+.page-btn{
+    min-width:38px;
+    height:38px;
+    border:none;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:700;
+    color:#f4ead1;
+    background:rgba(54,28,22,0.92);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+    transition:all .22s ease;
+}
+
+.page-btn:hover{
+    transform:translateY(-2px);
+    background:rgba(109,54,33,0.92);
+}
+
+.page-btn.active{
+    color:#1d0d07;
+    background:linear-gradient(135deg,#f0c978,#c9883a 70%,#8e5724 100%);
+    box-shadow:0 10px 24px rgba(201,136,58,0.28);
 }
 
 @media(max-width:700px){
@@ -332,6 +399,8 @@ a{color:#f1dca5}
 
 <body>
 
+<div class="viewport-fit">
+<div class="scale-frame" id="scaleFrame">
 <div class="container">
 
 <div class="header">
@@ -461,6 +530,10 @@ Please submit your server in advance. Listing may take time, so submit early.
 </tbody>
 </table>
 
+<div class="pagination-wrap">
+    <div class="pagination" id="pagination"></div>
+</div>
+
 <div class="tcl-box">
     <div class="tcl-title">The Cursed Land</div>
 
@@ -474,20 +547,30 @@ Please submit your server in advance. Listing may take time, so submit early.
     </a>
 </div>
 
+</div>
+</div>
+
 <script>
 let currentFilter="all";
 let currentSort="newest";
+let currentPage=1;
+const rowsPerPage=5;
 
-function filterServers(s){currentFilter=s;apply();}
-function sortServers(s){currentSort=s;apply();}
+function filterServers(s){
+currentFilter=s;
+currentPage=1;
+apply();
+}
+
+function sortServers(s){
+currentSort=s;
+currentPage=1;
+apply();
+}
 
 function apply(){
 let t=document.querySelector("#table tbody");
 let rows=[...t.querySelectorAll("tr")];
-
-rows.forEach(r=>{
-r.style.display=(currentFilter==="all"||r.dataset.status===currentFilter)?"":"none";
-});
 
 let order={upcoming:1,online:2,closed:3};
 
@@ -498,11 +581,77 @@ return currentSort==="newest"?new Date(b.dataset.date)-new Date(a.dataset.date):
 });
 
 rows.forEach(r=>t.appendChild(r));
+
+let filteredRows=rows.filter(r=>{
+return currentFilter==="all"||r.dataset.status===currentFilter;
+});
+
+let totalPages=Math.max(1,Math.ceil(filteredRows.length/rowsPerPage));
+if(currentPage>totalPages) currentPage=totalPages;
+
+let start=(currentPage-1)*rowsPerPage;
+let end=start+rowsPerPage;
+
+rows.forEach(r=>{
+r.style.display="none";
+});
+
+filteredRows.forEach((r,index)=>{
+r.style.display=(index>=start&&index<end)?"":"none";
+});
+
+renderPagination(totalPages);
+fitPageToViewport();
+}
+
+function renderPagination(totalPages){
+let pagination=document.getElementById("pagination");
+if(!pagination) return;
+
+if(totalPages<=1){
+pagination.innerHTML="";
+return;
+}
+
+let html="";
+
+for(let i=1;i<=totalPages;i++){
+html+='<button class="page-btn ' + (i===currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+}
+
+pagination.innerHTML=html;
+}
+
+function goToPage(page){
+currentPage=page;
+apply();
+}
+
+function fitPageToViewport(){
+let frame=document.getElementById("scaleFrame");
+if(!frame) return;
+
+frame.style.transform="scale(1)";
+
+requestAnimationFrame(()=>{
+    let availableWidth=window.innerWidth-12;
+    let availableHeight=window.innerHeight-12;
+    let naturalWidth=frame.scrollWidth;
+    let naturalHeight=frame.scrollHeight;
+    let scale=Math.min(1, availableWidth/naturalWidth, availableHeight/naturalHeight);
+
+    if(!Number.isFinite(scale) || scale<=0){
+        scale=1;
+    }
+
+    frame.style.transform="scale(" + scale + ")";
+});
 }
 
 apply();
 updateUptime();
 setInterval(updateUptime, 1000);
+window.addEventListener("resize", fitPageToViewport);
 
 function calculateUptime(startDate){
     const now = new Date();
@@ -533,6 +682,7 @@ function calculateUptime(startDate){
 
 function updateUptime(){
     const now = new Date();
+    let changed = false;
 
     document.querySelectorAll("#table tbody tr").forEach(row=>{
         const date = new Date(row.dataset.date);
@@ -548,6 +698,7 @@ function updateUptime(){
             row.dataset.status = "online";
             statusEl.className = "status online";
             statusEl.innerText = "Online";
+            changed = true;
         }
 
         if(status === "online"){
@@ -556,6 +707,12 @@ function updateUptime(){
             uptimeCell.innerText = "-";
         }
     });
+
+    if(changed){
+        apply();
+    } else {
+        fitPageToViewport();
+    }
 }
 </script>
 
